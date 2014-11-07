@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++11 -fpermissive    CMakeFiles/XMLTest.dir/xml_test.cpp.o CMakeFiles/XMLTest.dir/source/xml.cpp.o  -o XMLTest -rdynamic 

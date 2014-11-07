@@ -8,10 +8,16 @@
 
 namespace XML
 {
+	/// @brief	[in-class]	TRUE if associated stream is healthy
 	#define XML_SEARCH_VALID			(!this->stream_ptr->fail())
+
+	/// @brief 	[in-class]	Position within current associated stream
 	#define XML_POS						(static_cast<size_t>(this->stream_ptr->tellg()))
+	
+	/// @brief 	[in-class]	Associated stream
 	#define XML_STREAM					(*this->stream_ptr)
 	
+	/// @brief 	[in-class]	Enables thread scoped guarding macro
 	#if 	XML_THREADSAFE
 	#define XML_THREADGAURD				std::lock_guard<std::mutex>	__gaurd(protex);
 	#else
@@ -19,10 +25,10 @@ namespace XML
 	#endif
 
 
-	///	@brief	Main constructor
+	///	@brief	Existing-stream constructor
+	///			Associates an existing input stream with the sentry
 	///
-	/// @param	stream	xml-source stream. This stream is an STL compliant input stream or
-	///					std::istream derivative.
+	/// @param	stream	input stream 
 	reader::reader( std::istream& stream ) :
 		tag(tag), 
 		limits(true), 
@@ -36,15 +42,16 @@ namespace XML
 		/// Set the input stream
 		set_stream(stream);
 
-		if(XML_STREAM.bad())
+		if(!XML_SEARCH_VALID)
 			stat = xBAD;
 	}
 
 
 
-	///	@brief	File constructor
+	///	@brief	Stand-alone constructor
+	///			Associates an input stream with the sentry
 	///
-	/// @param	fname 	filename
+	/// @param	fname	input file name
 	reader::reader( const char* fname ) :
 		tag(tag), 
 		limits(true), 
@@ -58,12 +65,13 @@ namespace XML
 		/// Set the input stream from file
 		stream_ptr = new std::ifstream(fname); 
 
-		if(XML_STREAM.bad())
+		if(!XML_SEARCH_VALID)
 			stat = xBAD;
 	}
 
 
-
+	/// @brief 	Associates a new stream with the sentry 
+	/// @param	stream	input stream
 	void reader::set_stream( std::istream& stream ) 
 	{XML_THREADGAURD
 
@@ -75,6 +83,8 @@ namespace XML
 	}
 
 
+	/// @brief 	Associates a new file with the sentry 
+	/// @param	fname	input file name
 	void reader::set_stream( const char* fname )
 	{XML_THREADGAURD
 
@@ -84,6 +94,7 @@ namespace XML
 		stream_ptr 	= new std::ifstream(fname); 
 		stand_alone = true;
 	}
+
 
 
 	reader& reader::into(const char* tag)
@@ -104,6 +115,8 @@ namespace XML
 	}
 
 
+	/// @brief	Sets active tag and finds next associated pair
+	///			[private]
 	void	reader::parse(const char* tag)
 	{
 		/// Set new tag
@@ -115,12 +128,8 @@ namespace XML
 	}
 
 
-
-	/// @brief	Checks if next stream sequence is the tag-tolken
-	///
-	/// @param	stream	xml-source stream. This stream is an STL compliant input stream or
-	///					std::istream derivative.
-	/// @return	TRUE if the tolken is matched
+	/// @brief	Checks if next stream sequence is the specified tag
+	///			[private]
 	bool reader::match_tolken( std::string& tolken, range& keep_within )
 	{ 
 		char atc;
@@ -214,11 +223,7 @@ namespace XML
 
 
 
-	/// @brief	Gets a well-formed XML open tag and return its primitive type
-	///
-	/// @param	stream	xml-source stream. This stream is an STL compliant input stream or
-	///					std::istream derivative.
-	/// @return	xOpenTag -OR- xInlineTag upon success; xBadTag if the stream has ended -OR- the document is ill-formed
+	/// @brief	
 	reader::xmlret reader::find_open_tag()
 	{
 		while(XML_SEARCH_VALID)
@@ -267,11 +272,7 @@ namespace XML
 
 
 
-	/// @brief	Gets a well-formed XML closing tag
-	///
-	/// @param	stream	xml-source stream. This stream is an STL compliant input stream or
-	///					std::istream derivative.
-	/// @return	xCloseTag upon success
+	/// @brief	
 	reader::xmlret reader::find_close_tag()
 	{
 		while(XML_SEARCH_VALID)
@@ -308,11 +309,7 @@ namespace XML
 
 
 
-	/// @brief	Gets a well-formed XML pair attributed to specified tolken
-	///
-	/// @param	stream	xml-source stream. This stream is an STL compliant input stream or
-	///					std::istream derivative.
-	/// @return TRUE if a valid pair is found
+	/// @brief	
 	reader::xmlret reader::find_pair()
 	{
 		switch(find_open_tag())
@@ -328,12 +325,7 @@ namespace XML
 
 
 
-	/// @brief	Copies node contents in-stream to a string
-	///
-	/// @param	stream	xml-source stream. This stream is an STL compliant input stream or
-	///					std::istream derivative.
-	/// @param	outstr	string to modify with output (by append to back)
-	///	@return outstr
+	/// @brief	
 	reader&	reader::get_content( std::ostream& os, bool clean )
 	{XML_THREADGAURD
 		bool closed(true);

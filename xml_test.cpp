@@ -6,6 +6,7 @@
 
 int main(int argc, char** argv )
 {
+	/// Writer Test
 	std::ofstream test_fos("xml_output_test.xml");
 
 	XML::writer	wr(test_fos);
@@ -25,7 +26,7 @@ int main(int argc, char** argv )
 
 
 
-
+	/// Reader Test
 	std::ifstream 	test_fis("xml_output_test.xml");
 	std::string 	sval;
 	float 			norm;
@@ -34,22 +35,26 @@ int main(int argc, char** argv )
 
 	XML::reader	rd(test_fis);
 
-	rd.next("doc")
-		.get_param<std::string>("name",	sval);
+	//<doc ... />
+	rd.next("doc").get_param<std::string>("name",sval);
 
-	std::cout << sval << std::endl;
-
+	//<d>
 	rd.next("d")
 		.get_param<float>("norm",	norm)
 		.get_param<float>("X",		X)
 		.get_param<float>("Y",		Y);
 
+		//<p> ... </p>
+		rd.into("p").get_content(std::cout);
+	//</d>
+
+
+	std::cout 	<< sval 
+				<< std::endl;
 	std::cout 	<< "norm"	<< '\t' << norm	<< '\t'
 				<< "X"		<< '\t' << X	<< '\t'
 				<< "Y"		<< '\t' << Y	<< '\t' 
 				<< std::endl;
-
-	rd.into("p").get_content(std::cout);
 
 	return 0;
 }

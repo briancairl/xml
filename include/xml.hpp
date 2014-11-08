@@ -25,7 +25,7 @@ namespace	XML
 {
 
 	#ifndef XML_EXCEPTION
-	#define	XML_EXCEPTION	0
+	#define	XML_EXCEPTION	1
 	#endif
 
 	#ifndef XML_THREADSAFE	

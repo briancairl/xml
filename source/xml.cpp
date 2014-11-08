@@ -25,6 +25,16 @@ namespace XML
 	#endif
 
 
+#if(XML_EXCEPTION)
+	class XML_BadInputFile : public std::exception
+	{
+		virtual const char* what() const throw()
+		{
+			return "XML file was nonexistant.";
+		}
+	} XML_BadInputFile;
+#endif
+
 	///	@brief	Existing-stream constructor
 	///			Associates an existing input stream with the sentry
 	///
@@ -37,13 +47,11 @@ namespace XML
 		section(true),
 		depth(0UL),
 		stat(xGOOD),
-		stand_alone(false)
+		stand_alone(false),
+		stream_ptr(NULL)
 	{
 		/// Set the input stream
 		set_stream(stream);
-
-		if(!XML_SEARCH_VALID)
-			stat = xBAD;
 	}
 
 
@@ -60,13 +68,11 @@ namespace XML
 		section(true),
 		depth(0UL),
 		stat(xGOOD),
-		stand_alone(true)
+		stand_alone(true),
+		stream_ptr(NULL)
 	{
 		/// Set the input stream from file
-		stream_ptr = new std::ifstream(fname); 
-
-		if(!XML_SEARCH_VALID)
-			stat = xBAD;
+		set_stream(fname);
 	}
 
 
@@ -75,11 +81,18 @@ namespace XML
 	void reader::set_stream( std::istream& stream ) 
 	{XML_THREADGAURD
 
-		if(stand_alone)
+		if(stream_ptr&&stand_alone)
 			delete stream_ptr;
 		
 		stream_ptr 	= &stream;
 		stand_alone = false;
+
+		#if(XML_EXCEPTION)
+		if(!stream_ptr->good())
+			throw XML_BadInputFile;
+		#endif
+		if(!XML_SEARCH_VALID)
+			stat = xBAD;
 	}
 
 
@@ -93,6 +106,13 @@ namespace XML
 		
 		stream_ptr 	= new std::ifstream(fname); 
 		stand_alone = true;
+
+		#if(XML_EXCEPTION)
+		if(!stream_ptr->good())
+			throw XML_BadInputFile;
+		#endif
+		if(!XML_SEARCH_VALID)
+			stat = xBAD;
 	}
 
 

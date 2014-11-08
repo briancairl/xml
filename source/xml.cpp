@@ -98,7 +98,7 @@ namespace XML
 
 
 	reader& reader::into(const char* tag)
-	{XML_THREADGAURD
+	{
 		if(contents.is_nonzero_width())
 		{
 			limits = contents;

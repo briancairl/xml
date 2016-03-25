@@ -44,12 +44,10 @@ writer&  writer::set_param( const std::string& tag, const valType& val, xmltype 
   {
     (*stream_ptr) << ' ' << tag << '=' << '"' << val << '"';
   }
-  #if !XML_NOEXCEPT
   else
   {
-    abort();
+    throw exception::BadParamCountFile();
   }
-  #endif
 
   if(!param_count)
   {

@@ -16,9 +16,6 @@
 #ifndef    XML_HPP
 #define    XML_HPP  XML_VER
 
-#ifndef XML_NOEXCEPT
-#define XML_NOEXCEPT   false
-#endif
 
 #include  <stdint.h>
 #include  <stdlib.h>
@@ -29,6 +26,31 @@
 
 namespace  XML
 {
+
+
+namespace exception
+{
+
+class BadInputFile : public std::exception
+{
+  virtual const char* what() const throw()
+  {
+    return "XML file was nonexistant.";
+  }
+};
+
+
+class BadParamCountFile : public std::exception
+{
+  virtual const char* what() const throw()
+  {
+    return "Bad parameter count.";
+  }
+};
+
+}  // namespace exception
+
+
 
 typedef enum
 {

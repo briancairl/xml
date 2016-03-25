@@ -15,18 +15,6 @@ namespace XML
 #define XML_POS           (static_cast<size_t>(this->stream_ptr->tellg()))
 
 
-#if (!XML_NOEXCEPT)
-class XML_BadInputFile :
-  public std::exception
-{
-  virtual const char* what() const throw()
-  {
-    return "XML file was nonexistant.";
-  }
-};
-#endif
-
-
 /// @brief  Existing-stream constructor
 ///
 ///     Associates an existing input stream with the sentry
@@ -80,13 +68,11 @@ void reader::set_stream(std::istream& stream)
   stream_ptr  = &stream;
   stand_alone = false;
 
-  #if (!XML_NOEXCEPT)
   if (!stream_ptr->good())
   {
-    throw XML_BadInputFile();
+    throw exception::BadInputFile();
   }
-  #endif
-  if (!XML_SEARCH_VALID)
+  else if (!XML_SEARCH_VALID)
   {
     stat = xBAD;
   }
@@ -106,13 +92,11 @@ void reader::set_stream(const char* fname)
   stream_ptr  = new std::ifstream(fname);
   stand_alone = true;
 
-  #if (!XML_NOEXCEPT)
   if (!stream_ptr->good())
   {
-    throw XML_BadInputFile();
+    throw exception::BadInputFile();
   }
-  #endif
-  if (!XML_SEARCH_VALID)
+  else if (!XML_SEARCH_VALID)
   {
     stat = xBAD;
   }

@@ -15,12 +15,13 @@ int main(int argc, char** argv )
 
 	XML::writer	wr(test_fos);
 
-	wr.beg("doc",1UL)
+	wr.beg("doc", 1UL)
 		.set_param<std::string>("name", "test", XML::writer::INLINE);
-		wr.beg("d",3UL)
+		wr.beg("d", 4UL)
 			.set_param<float>("norm",	1.0f/sqrtf(2.0f))
 			.set_param<float>("X",		1.0f)
-			.set_param<float>("Y",		1.0f);
+			.set_param<float>("Y",		1.0f)
+			.set_param<float>("id",		1);
 			wr.beg("p")() 
 				<< "Just some words" << std::endl;
 			wr.end("p");
@@ -31,13 +32,13 @@ int main(int argc, char** argv )
 
 
 	/// Reader Test
-	std::ifstream 	test_fis(fname.c_str());
 	std::string sval;
 	float 			norm;
 	float 			X;
 	float 			Y;
+	int 				id;
 
-	XML::reader	rd(test_fis);
+	XML::reader	rd(fname.c_str());
 
 	//<doc ... />
 	rd.next("doc")
@@ -47,7 +48,8 @@ int main(int argc, char** argv )
 	rd.next("d")
 		.get_param<float>("norm",	norm)
 		.get_param<float>("X",		X)
-		.get_param<float>("Y",		Y);
+		.get_param<float>("Y",		Y)
+		.get_param<int>("id",  id);
 
 		//<p> ... </p>
 		rd.into("p").get_content(std::cout);
@@ -55,12 +57,12 @@ int main(int argc, char** argv )
 
 
 
-	std::cout 	<< sval 
-				<< std::endl;
-	std::cout 	<< "norm"	<< '\t' << norm	<< '\t'
-				<< "X"		<< '\t' << X	<< '\t'
-				<< "Y"		<< '\t' << Y	<< '\t' 
-				<< std::endl;
+	std::cout 
+				<< sval 							<< std::endl
+				<< "norm : " << norm	<< std::endl
+				<< "X    : " << X	 		<< std::endl
+				<< "Y    : " << Y	 		<< std::endl
+				<< "ID   : " << id	 	<< std::endl;
 
 	return 0;
 }

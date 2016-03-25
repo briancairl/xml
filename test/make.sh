@@ -1,0 +1,1 @@
+g++ -o xml_test -I ../include xml_test.cpp ../src/*.cpp

@@ -13,7 +13,9 @@ template<typename retTy>
 reader& reader::get_param( std::string tag, retTy& retVal )
 {
   if(param.is_zero_width())
+  {
     return (*this);
+  }
   else if(stat==xGOOD)
   {
     std::stringstream conv;
@@ -39,19 +41,24 @@ template<typename valType>
 writer&  writer::set_param( const std::string& tag, const valType& val, xmltype type )
 {
   if(param_count--)
-    (*stream_ptr) << ' ' << tag << XML_EQ << XML_QT << val << XML_QT;
-  #if XML_EXCEPTION
+  {
+    (*stream_ptr) << ' ' << tag << '=' << '"' << val << '"';
+  }
+  #if !XML_NOEXCEPT
   else
+  {
     abort();
+  }
   #endif
+
   if(!param_count)
   {
     if(type==SECTION)
-      (*stream_ptr) << XML_CL << '\n';
+      (*stream_ptr) << '>' << '\n';
     else
     {
       depth--;
-      (*stream_ptr) << XML_BS << XML_CL << '\n';
+      (*stream_ptr) << '/' << '>' << '\n';
     }
   }
   return (*this);

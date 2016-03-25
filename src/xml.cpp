@@ -355,6 +355,7 @@ reader&  reader::get_content(std::ostream& os, bool clean)
   bool closed(true);
   char atc;
   contents.set_from_beg(*stream_ptr);
+
   while (XML_SEARCH_VALID && contents.is_within(*stream_ptr))
   {
     stream_ptr->get(atc);
@@ -387,8 +388,8 @@ reader&  reader::get_content(std::string& str, bool clean)
 {
   bool closed(true);
   char atc;
-
   contents.set_from_beg(*stream_ptr);
+
   while (XML_SEARCH_VALID && contents.is_within(*stream_ptr))
   {
     stream_ptr->get(atc);
